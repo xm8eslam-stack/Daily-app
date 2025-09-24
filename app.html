@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>التطبيق اليومي الشامل</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    html { direction: rtl; }
+    body { font-family: 'Cairo', Tahoma, Arial, sans-serif; background: #f6f7fa; margin:0; padding:0; }
+    .container { max-width:470px; margin:30px auto; padding:20px; background:#fff; border-radius:13px; box-shadow:0 6px 20px #0001; }
+    h1, h2 { text-align:center; color:#333; margin-top:0; }
+    #progress { text-align:center; margin:12px 0 20px 0; font-size:1.17em; font-weight: bold; color:#31708f; }
+    .task { display:flex; flex-direction:column; background:#fff; margin:8px 0; padding:10px 13px; border-radius:5px; border-right: 5px solid transparent; box-shadow:0 1px 4px #0001; transition:all 0.3s; position:relative;}
+    .task .row { display:flex; align-items:center; justify-content:space-between; gap:5px;}
+    .task .suggestion { font-size:0.93em; color:#666; margin-top:2px; margin-bottom:2px; }
+    .completed { text-decoration: line-through; background: #d4ffd4 !important; opacity: 0.7; }
+    .current { background: #fff3cd !important; border-right: 5px solid #ffc107; box-shadow:0 0 8px #ffc1074b;}
+    .study { background:#fffbe4; }
+    .exercise { background:#e8f3ff; }
+    .meal { background:#fff2e0; }
+    .relax { background:#f3e9ff; }
+    .mental { background:#e7ffef; }
+    button { background:#4CAF50; color:white; border:none; padding:6px 12px; border-radius:3px; cursor:pointer;}
+    button:hover { background:#388e3c; }
+    #saveBtn { background: #17a2b8; }
+    #saveBtn:hover { background: #138496; }
+    #resetBtn { background: #ffc107; color: #333; }
+    #resetBtn:hover { background: #e0a800; }
+    #addTask { margin-top:13px; display:flex; flex-wrap:wrap; gap:5px; align-items: center;}
+    #addTask input, #addTask select { flex:1; padding:8px; border-radius:4px; border:1px solid #ccc; min-width:90px;}
+    #addBtn { background: #007bff; }
+    #addBtn:hover { background: #0056b3; }
+    #saveButtons { display: flex; justify-content: space-between; gap:9px; margin-top: 15px;}
+    #saveButtons button { flex: 1; }
+    #notes { width:100%; height:60px; margin-top:10px; border-radius:5px; padding:7px; border: 1px solid #ccc; font-size:1em; }
+    #history { margin-top:23px;}
+    details summary { cursor:pointer; font-weight:bold; color:#007bff;}
+    @media (max-width: 570px) {
+      .container { margin:0; border-radius:0; box-shadow:none;}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>التطبيق اليومي الشامل</h1>
+  <div id="progress">إنجاز اليوم: 0%</div>
+  <!-- قائمة المهام -->
+  <div id="tasks">
+    <div class="task exercise" data-time="06:30">
+      <div class="row"><span>6:30 – 7:00: تمارين صباحية</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">تمدد، سكوات 10 مرات، مشي سريع 10 دقائق</span>
+    </div>
+    <div class="task meal" data-time="07:00">
+      <div class="row"><span>7:00 – 7:30: إفطار صحي</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">بيض مسلوق + شوفان + فواكه أو زبادي مع مكسرات</span>
+    </div>
+    <div class="task study" data-time="07:30">
+      <div class="row"><span>7:30 – 9:00: مذاكرة جلسة 1</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">تقنية Pomodoro: 25 دقيقة تركيز، 5 دقائق راحة</span>
+    </div>
+    <div class="task relax" data-time="09:00">
+      <div class="row"><span>9:00 – 9:15: استراحة</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">تمدد، شرب ماء، إراحة العين</span>
+    </div>
+    <div class="task study" data-time="09:15">
+      <div class="row"><span>9:15 – 11:00: مذاكرة جلسة 2</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">تقنية Pomodoro</span>
+    </div>
+    <div class="task meal" data-time="11:00">
+      <div class="row"><span>11:00 – 11:30: وجبة خفيفة</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">فاكهة + مكسرات</span>
+    </div>
+    <div class="task study" data-time="11:30">
+      <div class="row"><span>11:30 – 13:00: مذاكرة جلسة 3</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">تقنية Pomodoro</span>
+    </div>
+    <div class="task meal" data-time="13:00">
+      <div class="row"><span>13:00 – 13:30: غداء</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">صدر دجاج + أرز بني + خضار</span>
+    </div>
+    <div class="task relax" data-time="13:30">
+      <div class="row"><span>13:30 – 14:00: استراحة بعد الغداء</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">قيلولة قصيرة أو استرخاء</span>
+    </div>
+    <div class="task study" data-time="14:00">
+      <div class="row"><span>14:00 – 16:00: مذاكرة جلسة 4</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">تقنية Pomodoro</span>
+    </div>
+    <div class="task mental" data-time="16:00">
+      <div class="row"><span>16:00 – 16:30: نشاط ذهني</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">ألعاب ذهنية، قراءة كتاب قصير</span>
+    </div>
+    <div class="task exercise" data-time="16:30">
+      <div class="row"><span>16:30 – 17:00: تمارين مسائية</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">تمدد، جري خفيف</span>
+    </div>
+    <div class="task meal" data-time="17:00">
+      <div class="row"><span>17:00 – 17:30: وجبة خفيفة مسائية</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">زبادي + فواكه</span>
+    </div>
+    <div class="task relax" data-time="17:30">
+      <div class="row"><span>17:30 – 18:00: استراحة</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">شرب ماء، استرخاء العين</span>
+    </div>
+    <div class="task study" data-time="18:00">
+      <div class="row"><span>18:00 – 20:00: مذاكرة جلسة 5</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">تقنية Pomodoro</span>
+    </div>
+    <div class="task meal" data-time="20:00">
+      <div class="row"><span>20:00 – 20:30: عشاء خفيف</span>
+        <span>
+          <button>تمت</button>
+          <button>تراجع</button>
+        </span>
+      </div>
+      <span class="suggestion">سلطة + بروتين + خضار</span>
+    </div>
+  </div>
+
+  <h2>إضافة مهمة جديدة</h2>
+  <div id="addTask">
+    <input type="text" id="taskText" placeholder="اسم المهمة">
+    <select id="taskType">
+      <option value="" disabled selected>اختر النوع</option>
+      <option value="study">مذاكرة (Study)</option>
+      <option value="exercise">رياضة (Exercise)</option>
+      <option value="meal">وجبة (Meal)</option>
+      <option value="relax">استراحة (Relax)</option>
+      <option value="mental">ذهني (Mental)</option>
+    </select>
+    <input type="text" id="taskSuggestion" placeholder="اقتراح / ملاحظة (اختياري)">
+    <input type="text" id="taskTime" placeholder="وقت (HH:MM)" pattern="\d{2}:\d{2}">
+    <button id="addBtn">أضف المهمة</button>
+  </div>
+
+  <h2>ملاحظات اليوم</h2>
+  <textarea id="notes" placeholder="اكتب ملاحظاتك أو شعورك اليوم هنا..."></textarea>
+  <div id="saveButtons">
+    <button id="saveBtn">حفظ اليوم والبدء بيوم فارغ</button>
+    <button id="resetBtn">إعادة تعيين اليوم الحالي</button>
+  </div>
+
+  <h2>سجل الأيام السابقة</h2>
+  <div id="history"></div>
+</div>
+<script>
+function highlightCurrentTask() {
+  const tasks = document.querySelectorAll('#tasks .task');
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+  let closestTask = null, minTimeDiff = Infinity;
+  tasks.forEach(task => task.classList.remove('current'));
+  tasks.forEach(task => {
+    const timeAttr = task.dataset.time;
+    if (!timeAttr) return;
+    const [hours, minutes] = timeAttr.split(':').map(Number);
+    const taskTime = hours * 60 + minutes;
+    const timeDiff = currentTime - taskTime;
+    if (!task.classList.contains('completed')) {
+      if (timeDiff >= -30 && timeDiff < 60) {
+        if (Math.abs(timeDiff) < Math.abs(minTimeDiff)) {
+          minTimeDiff = timeDiff;
+          closestTask = task;
+        }
+      }
+    }
+  });
+  if (closestTask) closestTask.classList.add('current');
+}
+function isValidTime(time) {
+  if (!time) return true;
+  const timeRegex = /^([01]\d|2[0-3]):?([0-5]\d)$/;
+  return timeRegex.test(time);
+}
+function sortTasks() {
+  const tasksContainer = document.getElementById('tasks');
+  const tasks = Array.from(tasksContainer.children);
+  tasks.sort((a, b) => {
+    const timeA = a.dataset.time || '23:59';
+    const timeB = b.dataset.time || '23:59';
+    if (timeA < timeB) return -1;
+    if (timeA > timeB) return 1;
+    return 0;
+  });
+  tasks.forEach(task => tasksContainer.appendChild(task));
+}
+function updateProgress(){
+  const tasks=document.querySelectorAll('#tasks .task');
+  const completed=document.querySelectorAll('#tasks .task.completed');
+  const percent=tasks.length > 0 ? Math.round((completed.length/tasks.length)*100) : 0;
+  document.getElementById('progress').innerText=`إنجاز اليوم: ${percent}%`;
+  saveState(); 
+  highlightCurrentTask();
+}
+function saveState() {
+  const tasks = document.querySelectorAll('#tasks .task');
+  const state = [];
+  tasks.forEach((t) => {
+    state.push({ html: t.outerHTML, completed: t.classList.contains('completed') });
+  });
+  localStorage.setItem('currentDayState', JSON.stringify(state));
+}
+function loadState() {
+  const savedState = JSON.parse(localStorage.getItem('currentDayState'));
+  if (!savedState) return;
+  const tasksContainer = document.getElementById('tasks');
+  tasksContainer.innerHTML = ''; 
+  savedState.forEach(item => {
+    const div = document.createElement('div');
+    div.innerHTML = item.html;
+    const taskElement = div.firstElementChild; 
+    if (item.completed) {
+      taskElement.classList.add('completed');
+    } else {
+      taskElement.classList.remove('completed');
+    }
+    tasksContainer.appendChild(taskElement);
+  });
+  sortTasks();
+}
+document.getElementById('tasks').addEventListener('click', e=>{
+  if(e.target.tagName==='BUTTON'){
+    const task=e.target.closest('.task');
+    if(e.target.innerText==='تمت') {
+      task.classList.add('completed');
+    }
+    else if(e.target.innerText==='تراجع') {
+      task.classList.remove('completed');
+    }
+    updateProgress();
+  }
+});
+document.getElementById('addBtn').addEventListener('click', ()=>{
+  const text=document.getElementById('taskText').value.trim();
+  const type=document.getElementById('taskType').value.trim(); 
+  const suggestion=document.getElementById('taskSuggestion').value.trim();
+  const time=document.getElementById('taskTime').value.trim();
+  if(!text || !type){
+      alert("الرجاء إدخال اسم المهمة واختيار النوع.");
+      return;
+  }
+  if(time && !isValidTime(time)){
+      alert("تنسيق الوقت غير صحيح. يرجى إدخال الوقت بصيغة HH:MM (مثال: 09:30).");
+      return;
+  }
+  const div=document.createElement('div');
+  div.className=`task ${type}`;
+  if(time) div.dataset.time=time;
+  div.innerHTML=`<div class="row"><span>${time ? time + ' – ' : ''}${text}</span>
+    <span><button>تمت</button><button>تراجع</button></span></div>
+    <span class="suggestion">${suggestion}</span>`;
+  document.getElementById('tasks').appendChild(div);
+  document.getElementById('taskText').value='';
+  document.getElementById('taskType').value='';
+  document.getElementById('taskSuggestion').value='';
+  document.getElementById('taskTime').value='';
+  sortTasks(); 
+  updateProgress();
+});
+function saveDay(clearTasks) {
+  const tasks=document.querySelectorAll('#tasks .task');
+  const notes=document.getElementById('notes').value;
+  const dayData=[];
+  tasks.forEach(t=>{
+    dayData.push({
+      text:t.querySelector('.row span').innerText,
+      type:t.classList[1],
+      completed:t.classList.contains('completed'),
+      time:t.dataset.time||'',
+      suggestion:t.querySelector('.suggestion')?.innerText||''
+    });
+  });
+  const allDays=JSON.parse(localStorage.getItem('dailyHistory')||'[]');
+  allDays.push({date:new Date().toLocaleDateString('ar-EG'),tasks:dayData,notes});
+  localStorage.setItem('dailyHistory',JSON.stringify(allDays));
+  localStorage.removeItem('currentDayState'); 
+  loadHistory();
+  document.getElementById('notes').value = '';
+  if (clearTasks) {
+    document.getElementById('tasks').innerHTML = '';
+    alert('تم حفظ اليوم! تم إفراغ قائمة المهام للبدء بيوم جديد.');
+  } else {
+    document.querySelectorAll('#tasks .task').forEach(t => t.classList.remove('completed'));
+    alert('تم حفظ اليوم! تم إعادة تعيين المهام للبدء بيوم جديد بنفس القائمة.');
+  }
+  updateProgress();
+}
+document.getElementById('saveBtn').addEventListener('click', () => saveDay(true));
+document.getElementById('resetBtn').addEventListener('click', () => saveDay(false));
+function loadHistory(){
+  const historyDiv=document.getElementById('history');
+  const allDays=JSON.parse(localStorage.getItem('dailyHistory')||'[]');
+  historyDiv.innerHTML='';
+  allDays.slice().reverse().forEach(day=>{ 
+    const div=document.createElement('div');
+    div.style.border='1px solid #ccc';
+    div.style.padding='10px';
+    div.style.marginBottom='10px';
+    div.style.borderRadius='5px';
+    div.style.background='#f9f9fa';
+    const completedCount = day.tasks.filter(t => t.completed).length;
+    const totalCount = day.tasks.length;
+    const dayPercent = totalCount > 0 ? Math.round((completedCount/totalCount)*100) : 0;
+    div.innerHTML=`<strong>التاريخ: ${day.date}</strong> (الإنجاز: ${dayPercent}%)<br>
+      <span>ملاحظات: ${day.notes.substring(0, 100)}${day.notes.length > 100 ? '...' : ''}</span>
+      <details><summary>عرض تفاصيل المهام (${completedCount}/${totalCount})</summary>
+      <ul style="list-style: none; padding: 0;">${day.tasks.map(t=>`<li style="margin-top: 5px; font-size: 0.97em;">${t.completed?'✅':'⬜'} ${t.text}${t.time ? `<small style='color:#888'> (${t.time})</small>` : ''}</li>`).join('')}</ul>
+      </details>`;
+    historyDiv.appendChild(div);
+  });
+}
+window.onload=()=>{
+  loadState(); 
+  loadHistory();
+  updateProgress();
+  sortTasks();
+  setInterval(highlightCurrentTask, 60000); 
+};
+</script>
+</body>
+</html>
